@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<script src="http://common.cnblogs.com/script/jquery.js" type="text/javascript"></script>
+
+<style>
+    .little-nav {
+        display: none;
+        position: fixed;
+        top: 100px;
+        right: 0px;
+        background: #fff;
+        border-radius: 4px;
+        border: 1px solid #e7e7e7;
+        box-shadow: 0 0 4px 0 rgba(0, 0, 0, .25);
+        overflow: hidden;
+        font-size: 16px;
+        cursor: pointer;
+        color: #999;
+        height: 40px;
+        padding: 0 20px;
+        line-height: 40px;
+        -moz-transition: all .7s;
+        /* Firefox 4 */
+        -webkit-transition: all .7s;
+        /* Safari 和 Chrome */
+        -o-transition: all .7s;
+        /* Opera */
+    }
+    
+    .little-nav:hover {
+        color: #008000;
+        text-shadow: 0 0 4px rgba(0, 0, 0, .2);
+    }
+    
+    .nav-box {
+        min-width: 300px;
+        display: none;
+        position: fixed;
+        top: 100px;
+        right: 0px;
+        background: #fff;
+        border-radius: 4px;
+        border: 1px solid #e7e7e7;
+        box-shadow: 0 0 4px 0 rgba(0, 0, 0, .25);
+        overflow: hidden;
+    }
+    
+    .click-toggle {
+        font-size: 16px;
+        cursor: pointer;
+        position: absolute;
+        right: 20px;
+        top: 0;
+        color: #999;
+        height: 40px;
+        line-height: 40px;
+        -moz-transition: all .7s;
+        /* Firefox 4 */
+        -webkit-transition: all .7s;
+        /* Safari 和 Chrome */
+        -o-transition: all .7s;
+        /* Opera */
+    }
+    
+    .click-toggle:hover {
+        color: #008000;
+        text-shadow: 0 0 4px rgba(0, 0, 0, .2);
+    }
+    
+    .nav-box .nav-title {
+        text-decoration: none;
+        display: block;
+        font-weight: bold;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        border-bottom: 1px solid #e7e7e7;
+        font-size: 18px;
+        color: #000;
+        cursor: pointer;
+        transition: all .7s;
+        -moz-transition: all .7s;
+        /* Firefox 4 */
+        -webkit-transition: all .7s;
+        /* Safari 和 Chrome */
+        -o-transition: all .7s;
+        /* Opera */
+    }
+    
+    .nav-box .nav-title:hover {
+        color: #008000;
+        text-shadow: 0 0 4px rgba(0, 0, 0, .2);
+    }
+    
+    .nav-box .title-list {
+        margin: 0;
+        list-style-type: none;
+        padding: 0 20px 12px 20px;
+    }
+    
+    .nav-box .title-box {}
+    
+    .nav-box .title {
+        left: 0;
+        position: relative;
+        text-align: left !important;
+        font-weight: bold;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        font-size: 16px;
+        color: #333;
+        cursor: pointer;
+        transition: all .7s;
+        -moz-transition: all .7s;
+        /* Firefox 4 */
+        -webkit-transition: all .7s;
+        /* Safari 和 Chrome */
+        -o-transition: all .7s;
+        /* Opera */
+    }
+    
+    .nav-box .title:hover {
+        left: -10px;
+        color: #008000;
+        text-shadow: 0 0 4px rgba(0, 0, 0, .2);
+    }
+    
+    .nav-box .sub-title-list {
+        min-width: 100px;
+        margin: 0;
+        list-style-type: none;
+        padding: 0 15px;
+    }
+    
+    .nav-box .sub-title {
+        left: 0;
+        position: relative;
+        text-align: left !important;
+        font-weight: bold;
+        height: 26px;
+        line-height: 26px;
+        text-align: center;
+        font-size: 14px;
+        color: #666;
+        cursor: pointer;
+        transition: all .7s;
+        -moz-transition: all .7s;
+        /* Firefox 4 */
+        -webkit-transition: all .7s;
+        /* Safari 和 Chrome */
+        -o-transition: all .7s;
+        /* Opera */
+    }
+    
+    .nav-box .sub-title:hover {
+        color: #008000;
+        text-shadow: 0 0 4px rgba(0, 0, 0, .2);
+        left: -10px;
+    }
+</style>
+
+<script>
+    var ua = navigator.userAgent.toLowerCase();
+    var isMobile = false;
+    if (ua.match(/android/i) == "android" || ua.match(/iPhone/i) == "iPhone" || ua.match(/iPad/i) == "iPad") {
+        isMobile = true;
+    }
+    setTimeout(function() {
+        if (!isMobile) main();
+        $('.J_littleNav').fadeIn(1000);
+    }, 1000);
+
+    function main() {
+        var titles = [];
+        var $titles = $('#cnblogs_post_body h2');
+        var innerHtml = '';
+        var subTitles = [];
+        var $mainBox = $(".J_titleBox");
+        $body = (window.opera) ? (document.compatMode == "CSS1Compat" ? $('html') : $('body')) : $('html,body');
+        for (var i = 0, len = $titles.length; i < len; i++) {
+            if ($titles.eq(i).html().length > 2) {
+                titles.push($titles.eq(i));
+                innerHtml += '<li class="title-box">' +
+                    '<p class="title J_title">' + $titles.eq(i).html() + '</p>' +
+                    '<ul class="sub-title-list">'
+            }
+            if (i !== len - 1) {
+                $titles.eq(i).nextUntil($titles.eq(i + 1)).map(function(index, item) {
+                    if ($(item)[0].tagName === 'H3' && $(item).html().length > 2) {
+                        innerHtml += '<li class="sub-title J_subTitle">' + $(item).html() + '</li>';
+                        subTitles.push($(item));
+                    }
+                });
+            } else {
+                $titles.eq(i).nextAll().map(function(index, item) {
+                    if ($(item)[0].tagName === 'H3' && $(item).html().length > 2) {
+                        innerHtml += '<li class="sub-title J_subTitle">' + $(item).html() + '</li>';
+                        subTitles.push($(item));
+                    }
+                });
+            }
+            innerHtml += '</ul>' +
+                '</li>';
+        }
+
+        $mainBox.append(innerHtml);
+
+        $mainBox.delegate(".J_title", "click", function() {
+            $body.animate({
+                scrollTop: titles[$(this).parent().index()].offset().top
+            }, 1000);
+        });
+        $mainBox.delegate(".J_subTitle", "click", function() {
+            var $self = $(this);
+            $(".J_titleBox .J_subTitle").map(function(index, item) {
+                $(item).html() === $self.html() ? $body.animate({
+                    scrollTop: subTitles[index].offset().top
+                }, 1000) : null;
+            });
+        });
+
+        $('.J_show').on('click', function() {
+            $('.J_littleNav').show();
+            $('.J_navBox').hide();
+        });
+        $('.J_hide').on('click', function() {
+            $('.J_littleNav').hide();
+            $('.J_navBox').show();
+        });
+
+        $(window).on('scroll', function() {
+            if ($(".J_navBox").height() + $(".J_navBox").offset().top > $(window).height() && $(window).height() > 400) {
+                $(".J_navBox").css({
+                    'overflow-y': 'scroll',
+                    'max-height': $(window).height() - 300
+                });
+            }
+        });
+    }
+</script>
+
+<body>
+    <div class="little-nav J_littleNav J_hide">
+        点击展开
+    </div>
+    <div class="nav-box J_navBox">
+        <a class="nav-title" href="#topics">目录</a>
+        <div class="click-toggle J_show">点击缩小</div>
+        <ul class="title-list J_titleBox">
+
+        </ul>
+    </div>
+    <div id="topics">
+        <div class="post">
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2" href="http://www.cnblogs.com/codetker/p/4684240.html">js 页面间的通信</a>
+            </h1>
+            <div class="clear"></div>
+
+
+            <div class="postBody">
+                <div id="cnblogs_post_body">
+                    <div class="BlogContent">
+                        <p>&nbsp; &nbsp; 这学期学习了数据库系统原理，做了实验，mark一记。</p>
+                        <h2>T—SQL的简单查询、连接查询</h2>
+                        <h3 class="osc_h1">（1）用SQL语句建库、建表并插入记录。</h3>
+                        <p>建库:</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291351007122720.png" alt=""></p>
+                        <p>建表：</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291351235718503.png" alt=""></p>
+                        <p>插入记录:</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291351328371939.png" alt=""></p>
+                        <p>查看</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291351423847288.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <h3>（2）修改表结构，包括修改属性列的数据类型，增加新的属性列，删除已有的属性列。</h3>
+                        <p>&nbsp; &nbsp; &nbsp;修改属性列的数据类型</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291352058991472.png" alt=""></p>
+                        <p>&nbsp; &nbsp;&nbsp;</p>
+                        <p>&nbsp; &nbsp; 添加新的属性列</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291352168066606.png" alt=""></p>
+                        <p>&nbsp;&nbsp;&nbsp; 删除已有属性列</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291352482902655.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <h3>（3）使用单个或多个元组插入</h3>
+                        <p>&nbsp; &nbsp;单元组</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291352561499320.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 多元组</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291353143689921.png" alt=""></p>
+                        <h3>（4）简单查询操作，包括投影、选择、数据排序、模糊匹配查询等。如果结果不正确，要进行修改，直至正确为止。</h3>
+                        <p>&nbsp; 投影</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;<img src="http://images0.cnblogs.com/blog2015/756653/201506/291353301816223.png" alt=""></p>
+                        <p>&nbsp; &nbsp; &nbsp; 选择</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291353378992632.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 数据排序</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291353474314753.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 模糊匹配查询</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291353575402233.png" alt=""></p>
+                        <h3>（5）连接查询操作，包括等值连接、自然连接、一般连接、自身连接、外连接。</h3>
+                        <p>&nbsp; &nbsp; 预处理操作，建立相关的表</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291354150406219.png" alt=""></p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291354252438968.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 等值连接</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291354422907027.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 自然连接</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291354532438147.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 一般连接</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291355176035972.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 自身连接（先创建能自身连接的属性）</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291355304788005.png" alt=""></p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291355471496878.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 外连接</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291356226344537.png" alt=""></p>
+                        <h2>子查询及组合</h2>
+                        <h3>（1）在DBMS的交互式环境里，用SQL语句建库、建表并插入记录。</h3>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291357296493231.png" alt=""></p>
+                        <h3>（2）使用In、比较符和Exists操作符进行嵌套查询操作。</h3>
+                        <p>&nbsp;使用in</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291358076657917.png" alt=""></p>
+                        <p>&nbsp; &nbsp;&nbsp;</p>
+                        <p>&nbsp; &nbsp;&nbsp;使用比较符</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291358538842996.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 使用exists</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291359096964000.png" alt=""></p>
+                        <h3>（3）分组查询，包括分组条件表达、选择组条件表达的方法。</h3>
+                        <p>&nbsp; 普通分组</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291359223066347.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 显示所有满足条件元组</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291359342908753.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 其它条件分组</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291359433843474.png" alt=""></p>
+                        <h3>（4）集合查询。</h3>
+                        <p>&nbsp; &nbsp; union并操作</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291359539932867.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 用union实现交操作</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291400057437344.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 用union实现差操作 &nbsp; &nbsp; &nbsp; &nbsp;( f1-f2 )并(f2-f1)</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291400190563076.png" alt=""></p>
+                        <h3>（5）使用视图创建语句建视图，通过视图查询数据</h3>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291400338536022.png" alt=""></p>
+                        <h3>（6）带子查询的修改和删除</h3>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291400437122343.png" alt=""></p>
+                        <h3>（7）通过视图修改和删除数据</h3>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291400555092806.png" alt=""></p>
+                        <h2>数据控制、数据的导入／导出、数据库备份和恢复</h2>
+                        <h3>（1）使用SQL对数据进行安全性控制，包括授权和权利收回。</h3>
+                        <p>&nbsp; &nbsp; 创建新用户</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291401095408853.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 新用户授权</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291401186818560.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp;回收新用户权利</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291401272746068.png" alt=""></p>
+                        <h3>（2）查看授权和权利收回后的结果</h3>
+                        <p>&nbsp; &nbsp; 授权后</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291401410403431.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 回收权利后</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291401582282746.png" alt=""></p>
+                        <h3>（3）导出到其它格式的文件(txt)。</h3>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 按一定格式导出student表到txt</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291402117745407.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 到相关位置查看导出的txt文件</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291402226033799.png" alt=""></p>
+                        <h3>（4）将其它格式的文件数据导入到数据库中。</h3>
+                        <p>&nbsp; &nbsp; 重建新表temptxt，导入txt文件到表中并查看</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291402331037990.png" alt=""></p>
+                        <h3>（5）创建一个数据库的备份（海量备份、增量备份）。</h3>
+                        <p>&nbsp; &nbsp; 用MySQL实现海量备份</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291402432748983.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 查看备份文件(包括了SQL语句记录)</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291402513684578.png" alt=""></p>
+                        <h3>（6）恢复备份到数据库</h3>
+                        <p>&nbsp; &nbsp; 删除已备份的基本表</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291403008843470.png" alt=""></p>
+                        <p>&nbsp; &nbsp;&nbsp;</p>
+                        <p>&nbsp; &nbsp; 使用备份的文件还原基本表</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291403088688564.png" alt=""></p>
+                        <p>&nbsp; &nbsp;&nbsp;</p>
+                        <p>&nbsp; &nbsp; 查看恢复后地表</p>
+                        <p><img src="http://images0.cnblogs.com/blog2015/756653/201506/291403208061284.png" alt=""></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp; &nbsp; 增量备份：按照网上的操作修改my-default.ini（没有my.ini和my.conf文件），添加了log-bin路径后却没能得到相关文件，使用了另一种方法 也没成功。查询得知MySQL5不支持增量备份，是指所有的5系列么？我用的是MySQL5.6......</p>
+                        <p>&nbsp;</p>
+                    </div>
+                </div>
+                <div id="MySignature"></div>
+                <div class="clear"></div>
+                <div id="blog_post_info_block">
+                    <div id="BlogPostCategory"></div>
+                    <div id="EntryTag"></div>
+                    <div id="blog_post_info">
+                        <div id="green_channel">
+                            <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(4607361,cb_blogId,1);green_channel_success(this,'谢谢推荐！');">好文要顶</a>
+                            <a id="green_channel_follow" onclick="follow('21060090-b4f8-e411-b908-9dcfd8948a71');" href="javascript:void(0);">关注我</a>
+                            <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+                            <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="//common.cnblogs.com/images/icon_weibo_24.png" alt=""></a>
+                            <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="//common.cnblogs.com/images/wechat.png" alt=""></a>
+                        </div>
+                        <div id="author_profile">
+                            <div id="author_profile_info" class="author_profile_info">
+                                <a href="http://home.cnblogs.com/u/codetker/" target="_blank"><img src="//pic.cnblogs.com/face/756653/20150512224524.png" class="author_avatar" alt=""></a>
+                                <div id="author_profile_detail" class="author_profile_info">
+                                    <a href="http://home.cnblogs.com/u/codetker/">codetker</a><br>
+                                    <a href="http://home.cnblogs.com/u/codetker/followees">关注 - 10</a><br>
+                                    <a href="http://home.cnblogs.com/u/codetker/followers">粉丝 - 15</a>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                            <div id="author_profile_honor"></div>
+                            <div id="author_profile_follow">
+                            </div>
+                        </div>
+                        <div id="div_digg">
+                            <div class="diggit" onclick="votePost(4607361,'Digg')">
+                                <span class="diggnum" id="digg_count">1</span>
+                            </div>
+                            <div class="buryit" onclick="votePost(4607361,'Bury')">
+                                <span class="burynum" id="bury_count">0</span>
+                            </div>
+                            <div class="clear"></div>
+                            <div class="diggword" id="digg_tips">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    <div id="post_next_prev"><a href="http://www.cnblogs.com/codetker/p/4607442.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/codetker/p/4607442.html" title="发布于2015-06-29 14:39">数据挖掘一般过程</a><br></div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
