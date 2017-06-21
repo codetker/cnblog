@@ -236,11 +236,18 @@
             $('.J_navBox').show();
         });
 
-        $(window).on('scroll', function() {
+        if ($(".J_navBox").height() + $(".J_navBox").offset().top > $(window).height() && $(window).height() > 400) {
+            $(".J_navBox").css({
+                'overflow-y': 'scroll',
+                'max-height': $(window).height() - 97
+            });
+        }
+
+        $(window).on('resize', function() {
             if ($(".J_navBox").height() + $(".J_navBox").offset().top > $(window).height() && $(window).height() > 400) {
                 $(".J_navBox").css({
                     'overflow-y': 'scroll',
-                    'max-height': $(window).height() - 300
+                    'max-height': $(window).height() - 97
                 });
             }
         });
